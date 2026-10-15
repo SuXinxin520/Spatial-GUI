@@ -132,11 +132,17 @@ public class SpatialGUIClient {
         if (Minecraft.getInstance().level == null) return false;
 
         String id = screen.getClass().getName();
-        if (id.contains("TitleScreen")) return false;
-        if (id.contains("ReceivingLevelScreen")) return false;
-        if (id.contains("LevelLoadingScreen")) return false;
-        if (id.contains("ChatScreen")) return false;
-        if (id.contains("yacl")) return false;
+        if (id.contains("TitleScreen") || id.contains("ReceivingLevelScreen")
+                || id.contains("LevelLoadingScreen") || id.contains("ChatScreen")
+                || id.contains("yacl") || id.contains("Reconfig")
+                || id.contains("Progress") || id.contains("GenericMessage")
+                || id.contains("Disconnected") || id.contains("ConnectScreen")
+                || id.contains("GenericDirtMessage") || id.contains("GenericWaiting")
+                || id.contains("WaitingForResponse") || id.contains("JoinMultiplayer")
+                || id.contains("SelectWorld") || id.contains("ErrorScreen")
+                || id.contains("OutOfMemory") || id.contains("DatapackLoadFailure")
+                || id.contains("WinScreen") || id.contains("FileFixer"))
+            return false;
 
         if (!id.contains("$") && !SpatialGUI.config.seenScreens.contains(id)) {
             try {

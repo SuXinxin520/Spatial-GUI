@@ -145,6 +145,42 @@ public class SpatialGUIConfig {
     @DoubleSlider(min = 1.0, max = 3.0, step = 0.05)
     public double recipeBookShrinkFactor = 1.5;
 
+    // dropShadow
+    @MasterTickBox(value = {"dropShadowSoftness", "dropShadowAlpha", "dropShadowScaleMultiplier", "dropShadowHorizontalOffset", "dropShadowVerticalOffset", "dropShadowDepthOffset"})
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    public boolean dropShadowEnabled = true;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @IntSlider(min = 1, max = 6, step = 1)
+    public int dropShadowLayers = 1;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @IntSlider(min = 0, max = 255, step = 1)
+    public int dropShadowAlpha = 120;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = 0.8, max = 1.2, step = 0.01)
+    public double dropShadowScaleMultiplier = 1.0;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = -0.05, max = 0.05, step = 0.001)
+    public double dropShadowHorizontalOffset = 0.008;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = -0.05, max = 0.05, step = 0.001)
+    public double dropShadowVerticalOffset = -0.012;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = 0.0, max = 0.05, step = 0.001)
+    public double dropShadowDepthOffset = 0.002;
+
     // look 
     @SerialEntry
     @AutoGen(category = "appearance", group = "look")

@@ -48,7 +48,9 @@ public class SpatialGUIRenderer {
     private Vec3 cameraStartPos;
     private float cameraStartYRot;
     private static boolean wasTrue;
-    public boolean headLockInitialized = false;
+    public boolean poseStarted = false;
+    private long removedFrame = -1;
+    private boolean prevPoseStarted;
     private float fovProgress = 0f;
     private long lastFovUpdateNano = 0L;
 
@@ -79,6 +81,7 @@ public class SpatialGUIRenderer {
         if (screen != Minecraft.getInstance().screen) return;
         //?}
 
+        boolean swapping = hookedScreen != null || removedFrame == frameCounter;
 
         if (hookedScreen != null) onScreenRemoved(false);
 
@@ -101,7 +104,11 @@ public class SpatialGUIRenderer {
         skipWindowOverride = false;
         hookedScreen = screen;
         isInventoryScreen = screen instanceof InventoryScreen || screen.getClass().getName().contains("InventoryScreen");
-        inventoryRenderer.setScreenOpenTime(System.currentTimeMillis());
+        if (swapping) {
+            poseStarted = prevPoseStarted;
+        } else {
+            inventoryRenderer.setScreenOpenTime(System.currentTimeMillis());
+        }
 
         var player = client.player;
         if (player != null && Minecraft.getInstance().level != null) {
@@ -167,7 +174,9 @@ public class SpatialGUIRenderer {
         }
         hookedScreen = null;
         isInventoryScreen = false;
-        headLockInitialized = false;
+        removedFrame = frameCounter;
+        prevPoseStarted = poseStarted;
+        poseStarted = false;
         SpatialGUIClient.setSwitchedToFirstPersonDueToBlock(false);
 
         var mc = Minecraft.getInstance();

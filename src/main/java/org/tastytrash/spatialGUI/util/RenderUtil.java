@@ -16,13 +16,36 @@ import org.tastytrash.spatialGUI.mixin.render.GameRendererInvoker;
 public final class RenderUtil {
     private RenderUtil() {}
 
-    public static void addQuadVertex(VertexConsumer buffer, Matrix4f pose,
-            float x, float y, float z, float u, float v) {
+    public static void addQuadVertex(VertexConsumer buffer, Matrix4f pose, float x, float y, float z, float u, float v) {
+        addQuadVertex(buffer, pose, x, y, z, u, v, 255, SpatialGUI.config.screenAlpha);
+    }
+
+    public static void addQuadVertex(VertexConsumer buffer, Matrix4f pose, float x, float y, float z, float u, float v, int rgb, int a) {
         //? if >1.20.1 {
-        buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(255, 255, 255, SpatialGUI.config.screenAlpha);
+        buffer.addVertex(pose, x, y, z).setUv(u, v).setColor(rgb, rgb, rgb, a);
         //?} else {
-        /*buffer.vertex(pose, x, y, z).uv(u, v).color(255, 255, 255, SpatialGUI.config.screenAlpha).endVertex();
-        *///?}
+        /*buffer.vertex(pose, x, y, z).uv(u, v).color(rgb, rgb, rgb, a).endVertex();
+         *///?}
+    }
+
+    public static void addScreenQuad(VertexConsumer buffer, Matrix4f pose, float aspect) {
+        addScreenQuad(buffer, pose, aspect, 255, SpatialGUI.config.screenAlpha);
+    }
+
+    public static void addScreenQuad(VertexConsumer buffer, Matrix4f pose, float aspect, int rgb, int a) {
+        float halfWidth = aspect * 0.5F;
+        float halfHeight = 0.5F;
+        if (VulkanModCompat.isVulkanModLoaded()) {
+            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 1.0F, rgb, a);
+            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 1.0F, rgb, a);
+            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 0.0F, rgb, a);
+            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 0.0F, rgb, a);
+        } else {
+            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 0.0F, rgb, a);
+            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 0.0F, rgb, a);
+            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 1.0F, rgb, a);
+            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 1.0F, rgb, a);
+        }
     }
 
     public static void applyScreenTransform(PoseStack matrices, boolean isFirstPerson,
@@ -119,22 +142,6 @@ public final class RenderUtil {
                 (float) SpatialGUI.config.screenPitchOffset,
                 (float) SpatialGUI.config.screenScale * thirdPersonFovMultiplier
         );
-    }
-
-    public static void addScreenQuad(VertexConsumer buffer, Matrix4f pose, float aspect) {
-        float halfWidth = aspect * 0.5F;
-        float halfHeight = 0.5F;
-        if (VulkanModCompat.isVulkanModLoaded()) {
-            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 1.0F);
-            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 1.0F);
-            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 0.0F);
-            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 0.0F);
-        } else {
-            addQuadVertex(buffer, pose, -halfWidth, -halfHeight, 0.0F, 0.0F, 0.0F);
-            addQuadVertex(buffer, pose, halfWidth, -halfHeight, 0.0F, 1.0F, 0.0F);
-            addQuadVertex(buffer, pose, halfWidth, halfHeight, 0.0F, 1.0F, 1.0F);
-            addQuadVertex(buffer, pose, -halfWidth, halfHeight, 0.0F, 0.0F, 1.0F);
-        }
     }
 
     public record QuadBasis(Vector3f centerOffset, Vector3f right, Vector3f up, Vector3f normal, float halfWidth, float halfHeight) {}
