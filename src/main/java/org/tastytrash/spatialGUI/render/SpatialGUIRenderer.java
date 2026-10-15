@@ -295,7 +295,7 @@ public class SpatialGUIRenderer {
             return new Vector2d(sourceX, sourceY);
         }
 
-        double guiScale = SpatialGUI.config.getEffectiveGuiScale(client.getWindow().getWidth(), client.getWindow().getHeight());
+        double guiScale = SpatialGUI.config.getEffectiveGuiScale();
         Vector2d mappedMouse = MouseHandlerUtil.mapMousePosition(
                 sourceX, sourceY, quadBasis, inventoryRenderer.getCylinderBasis(), guiScale,
                 targetManager.getInventoryTarget()

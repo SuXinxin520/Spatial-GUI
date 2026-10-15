@@ -6,7 +6,7 @@ import org.tastytrash.spatialGUI.SpatialGUI;
 
 public final class GuiScaleUtil {
     public static int effectiveScale(Window w) {
-        return SpatialGUI.config.getEffectiveGuiScale(w.getWidth(), w.getHeight());
+        return SpatialGUI.config.getEffectiveGuiScale();
     }
     public static int scaledWidth(Window w)  {
         return Mth.ceil(w.getWidth()  / (double) effectiveScale(w));

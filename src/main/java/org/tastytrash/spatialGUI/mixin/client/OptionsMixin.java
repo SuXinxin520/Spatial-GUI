@@ -19,10 +19,10 @@ public abstract class OptionsMixin {
     private void spatialGUI$forceCameraMode(CallbackInfoReturnable<CameraType> cir) {
         var renderer = SpatialGUIClient.renderer();
         if (renderer.shouldCapture() && SpatialGUIClient.isEnabled()) {
+            SpatialGUIClient.setWasThirdPersonCamera(this.cameraType != CameraType.FIRST_PERSON);
             if (SpatialGUI.config.autoDetectCameraMode) {
                 return;
             }
-            SpatialGUIClient.setWasThirdPersonCamera(this.cameraType != CameraType.FIRST_PERSON);
             boolean isFirstPerson = SpatialGUIClient.shouldUseFirstPersonMode(renderer.getHookedScreen());
             if (isFirstPerson) {
                 cir.setReturnValue(CameraType.FIRST_PERSON);

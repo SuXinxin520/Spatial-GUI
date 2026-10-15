@@ -136,6 +136,7 @@ public class SpatialGUIClient {
         if (id.contains("ReceivingLevelScreen")) return false;
         if (id.contains("LevelLoadingScreen")) return false;
         if (id.contains("ChatScreen")) return false;
+        if (id.contains("yacl")) return false;
 
         if (!id.contains("$") && !SpatialGUI.config.seenScreens.contains(id)) {
             try {

@@ -8,6 +8,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 //? if fabric {
 import net.fabricmc.loader.api.FabricLoader;
@@ -80,6 +81,18 @@ public class SpatialGUIConfig {
     @TickBox
     public boolean hideHotbar = false;
 
+    // guiScale 
+    @MasterTickBox(value = {"guiScale"}, invert = true)
+    @SerialEntry
+    @AutoGen(category = "general", group = "guiScale")
+    @TickBox
+    public boolean overrideGuiScale = false;
+
+    @SerialEntry
+    @AutoGen(category = "general", group = "guiScale")
+    @IntSlider(min = 1, max = 6, step = 1)
+    public int guiScale = 4;
+
     // ========
     // screens
     // ========
@@ -122,16 +135,6 @@ public class SpatialGUIConfig {
     // appearance
     // ==========
     // size 
-    @MasterTickBox(value = {"guiScale"}, invert = true)
-    @SerialEntry
-    @AutoGen(category = "appearance", group = "size")
-    public boolean autoCalculateGuiScale = true;
-
-    @SerialEntry
-    @AutoGen(category = "appearance", group = "size")
-    @IntSlider(min = 1, max = 6, step = 1)
-    public int guiScale = 4;
-
     @SerialEntry
     @AutoGen(category = "appearance", group = "size")
     @IntSlider(min = 25, max = 100, step = 1)
@@ -506,48 +509,11 @@ public class SpatialGUIConfig {
     
     
     
-    public int calculateAutoGuiScale(int windowWidth, int windowHeight) {
-        if (windowHeight <= 0 || windowWidth <= 0) return 1;
-        int scale = 1;
-        while (windowWidth / (scale + 1) >= 320 && windowHeight / (scale + 1) >= 240) {
-            scale++;
+    public int getEffectiveGuiScale() {
+        if (overrideGuiScale) {
+            return Mth.clamp(guiScale, 1, 6);
         }
-        if (scale == 1 && windowHeight >= 430 && windowWidth >= 640) {
-            scale = 2;
-        }
-        return scale;
-    }
-
-    public int calculateAutoGuiScale(int windowHeight) {
-        if (windowHeight <= 0) return 1;
-        int scale = 1;
-        while (windowHeight / (scale + 1) >= 240) {
-            scale++;
-        }
-        if (scale == 1 && windowHeight >= 430) {
-            scale = 2;
-        }
-        return scale;
-    }
-
-    public int getEffectiveGuiScale(int windowWidth, int windowHeight) {
-        if (autoCalculateGuiScale) {
-            return calculateAutoGuiScale(windowWidth, windowHeight);
-        }
-        int clampedGuiScale = Mth.clamp(guiScale, 1, 6);
-        int autoScale = calculateAutoGuiScale(windowWidth, windowHeight);
-        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
-        return Math.max(1, relativeScale);
-    }
-
-    public int getEffectiveGuiScale(int windowHeight) {
-        if (autoCalculateGuiScale) {
-            return calculateAutoGuiScale(windowHeight);
-        }
-        int clampedGuiScale = Mth.clamp(guiScale, 1, 6);
-        int autoScale = calculateAutoGuiScale(windowHeight);
-        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
-        return Math.max(1, relativeScale);
+        return Minecraft.getInstance().options.guiScale().get();
     }
     
     public static class StringValueFactory implements ListGroup.ValueFactory<String> {

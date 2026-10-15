@@ -139,7 +139,7 @@ public class ScreenExtractor {
     public void extractIsolatedScreen(Screen screen, float partialTick, QuadBasis quadBasis, CylinderBasis cylinderBasis, TextureTargetManager targetManager, com.llamalad7.mixinextras.injector.wrapoperation.Operation<Void> renderOperation) {
         ensureScreenGuiRenderer();
         Minecraft mc = Minecraft.getInstance();
-        double guiScale = SpatialGUI.config.getEffectiveGuiScale(mc.getWindow().getWidth(), mc.getWindow().getHeight());
+        double guiScale = SpatialGUI.config.getEffectiveGuiScale();
         boolean flatCursor = false;
         //? if neoforge {
         /*flatCursor = ControlifyCompat.isVirtualMouseActive() && !SpatialGUIRenderer.isCrosshairModeActive();
