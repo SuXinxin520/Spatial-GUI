@@ -81,7 +81,7 @@ public abstract class CameraMixin {
         var renderer = SpatialGUIClient.renderer();
         boolean isCapturing = renderer.shouldCapture();
 
-        if (isCapturing && this.entity != null && SpatialGUIClient.isEnabled()) {
+        if (isCapturing && this.entity != null && SpatialGUIClient.isEnabled() && Minecraft.getInstance().level != null && this.entity.level() != null) {
             boolean resumedFromClosing = closingCameraActive;
             closingCameraActive = false;
             TRANSITION_DURATION_MS = SpatialGUI.config.transitionDurationMs;

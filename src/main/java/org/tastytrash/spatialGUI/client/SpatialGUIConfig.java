@@ -8,6 +8,7 @@ import dev.isxander.yacl3.config.v2.api.ConfigField;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 import dev.isxander.yacl3.config.v2.api.autogen.*;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
 //? if fabric {
 import net.fabricmc.loader.api.FabricLoader;
@@ -80,6 +81,18 @@ public class SpatialGUIConfig {
     @TickBox
     public boolean hideHotbar = false;
 
+    // guiScale 
+    @MasterTickBox(value = {"guiScale"}, invert = true)
+    @SerialEntry
+    @AutoGen(category = "general", group = "guiScale")
+    @TickBox
+    public boolean overrideGuiScale = false;
+
+    @SerialEntry
+    @AutoGen(category = "general", group = "guiScale")
+    @IntSlider(min = 1, max = 6, step = 1)
+    public int guiScale = 4;
+
     // ========
     // screens
     // ========
@@ -122,16 +135,6 @@ public class SpatialGUIConfig {
     // appearance
     // ==========
     // size 
-    @MasterTickBox(value = {"guiScale"}, invert = true)
-    @SerialEntry
-    @AutoGen(category = "appearance", group = "size")
-    public boolean autoCalculateGuiScale = true;
-
-    @SerialEntry
-    @AutoGen(category = "appearance", group = "size")
-    @IntSlider(min = 1, max = 6, step = 1)
-    public int guiScale = 4;
-
     @SerialEntry
     @AutoGen(category = "appearance", group = "size")
     @IntSlider(min = 25, max = 100, step = 1)
@@ -141,6 +144,42 @@ public class SpatialGUIConfig {
     @AutoGen(category = "appearance", group = "size")
     @DoubleSlider(min = 1.0, max = 3.0, step = 0.05)
     public double recipeBookShrinkFactor = 1.5;
+
+    // dropShadow
+    @MasterTickBox(value = {"dropShadowSoftness", "dropShadowAlpha", "dropShadowScaleMultiplier", "dropShadowHorizontalOffset", "dropShadowVerticalOffset", "dropShadowDepthOffset"})
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    public boolean dropShadowEnabled = true;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @IntSlider(min = 1, max = 6, step = 1)
+    public int dropShadowLayers = 1;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @IntSlider(min = 0, max = 255, step = 1)
+    public int dropShadowAlpha = 120;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = 0.8, max = 1.2, step = 0.01)
+    public double dropShadowScaleMultiplier = 1.0;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = -0.05, max = 0.05, step = 0.001)
+    public double dropShadowHorizontalOffset = 0.008;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = -0.05, max = 0.05, step = 0.001)
+    public double dropShadowVerticalOffset = -0.012;
+
+    @SerialEntry
+    @AutoGen(category = "appearance", group = "dropShadow")
+    @DoubleSlider(min = 0.0, max = 0.05, step = 0.001)
+    public double dropShadowDepthOffset = 0.002;
 
     // look 
     @SerialEntry
@@ -506,48 +545,11 @@ public class SpatialGUIConfig {
     
     
     
-    public int calculateAutoGuiScale(int windowWidth, int windowHeight) {
-        if (windowHeight <= 0 || windowWidth <= 0) return 1;
-        int scale = 1;
-        while (windowWidth / (scale + 1) >= 320 && windowHeight / (scale + 1) >= 240) {
-            scale++;
+    public int getEffectiveGuiScale() {
+        if (overrideGuiScale) {
+            return Mth.clamp(guiScale, 1, 6);
         }
-        if (scale == 1 && windowHeight >= 430 && windowWidth >= 640) {
-            scale = 2;
-        }
-        return scale;
-    }
-
-    public int calculateAutoGuiScale(int windowHeight) {
-        if (windowHeight <= 0) return 1;
-        int scale = 1;
-        while (windowHeight / (scale + 1) >= 240) {
-            scale++;
-        }
-        if (scale == 1 && windowHeight >= 430) {
-            scale = 2;
-        }
-        return scale;
-    }
-
-    public int getEffectiveGuiScale(int windowWidth, int windowHeight) {
-        if (autoCalculateGuiScale) {
-            return calculateAutoGuiScale(windowWidth, windowHeight);
-        }
-        int clampedGuiScale = Mth.clamp(guiScale, 1, 6);
-        int autoScale = calculateAutoGuiScale(windowWidth, windowHeight);
-        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
-        return Math.max(1, relativeScale);
-    }
-
-    public int getEffectiveGuiScale(int windowHeight) {
-        if (autoCalculateGuiScale) {
-            return calculateAutoGuiScale(windowHeight);
-        }
-        int clampedGuiScale = Mth.clamp(guiScale, 1, 6);
-        int autoScale = calculateAutoGuiScale(windowHeight);
-        int relativeScale = Math.round(clampedGuiScale * (autoScale / 4.0f));
-        return Math.max(1, relativeScale);
+        return Minecraft.getInstance().options.guiScale().get();
     }
     
     public static class StringValueFactory implements ListGroup.ValueFactory<String> {

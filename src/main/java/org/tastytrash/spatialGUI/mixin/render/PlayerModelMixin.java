@@ -12,7 +12,7 @@ import org.tastytrash.spatialGUI.client.SpatialGUIClient;
 
 //? if >1.21.1 {
 import net.minecraft.client.model.player.PlayerModel;
-import net.minecraft.client.renderer.entity.state.AvatarRenderState;
+import net.minecraft.client.renderer.entity.state.AvatarRenderState;import org.tastytrash.spatialGUI.client.SpatialGUIConfig;
 //?} else {
 /*import net.minecraft.client.model.PlayerModel;
 import net.minecraft.world.entity.LivingEntity;
@@ -33,7 +33,7 @@ public class PlayerModelMixin {
 
         var renderer = SpatialGUIClient.renderer();
         Vec3 cameraPos = SpatialGUIClient.getCameraPosition();
-        if (renderer == null || cameraPos == null || !SpatialGUIClient.isEnabled() || Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
+        if (renderer == null || cameraPos == null || !SpatialGUIClient.isEnabled() || SpatialGUIClient.getEffectiveFirstPersonMode()) {
             return;
         }
         if (!renderer.shouldCapture() && !renderer.isClosing() && !SpatialGUIClient.getWasClosing()) {

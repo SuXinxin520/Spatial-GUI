@@ -44,7 +44,7 @@ public class AvatarRendererMixin {
         boolean closing = renderer.isClosing() && !renderer.isClosingFirstPerson();
 
         if (!(renderer.shouldCapture() || closing) || !SpatialGUIClient.isEnabled()) {
-            renderer.headLockInitialized = false;
+            renderer.poseStarted = false;
             return null;
         }
 
@@ -68,13 +68,13 @@ public class AvatarRendererMixin {
         float targetPitch = Mth.clamp(normY * (float) SpatialGUI.config.avatarMaxPitchOffset, -60f, 60f);
 
         long now = System.nanoTime();
-        boolean justOpened = !renderer.headLockInitialized;
+        boolean justOpened = !renderer.poseStarted;
 
         if (justOpened) {
             smoothedYaw = targetYaw;
             smoothedPitch = targetPitch;
             openStartNanos = now;
-            renderer.headLockInitialized = true;
+            renderer.poseStarted = true;
         } else {
             smoothedYaw = Mth.rotLerp(SMOOTHING, smoothedYaw, targetYaw);
             smoothedPitch = Mth.lerp(SMOOTHING, smoothedPitch, targetPitch);

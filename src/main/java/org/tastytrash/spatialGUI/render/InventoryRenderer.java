@@ -35,7 +35,6 @@ import net.minecraft.client.renderer.StagedVertexBuffer;
 import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.blaze3d.buffers.GpuBufferSlice;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import com.mojang.blaze3d.ProjectionType;
 import com.mojang.blaze3d.textures.AddressMode;
 import com.mojang.blaze3d.textures.FilterMode;
 import com.mojang.blaze3d.textures.GpuTextureView;
@@ -197,8 +196,17 @@ public class InventoryRenderer {
             RenderUtil.addCurvedScreenQuad(buffer, pose, aspect, arcRadians, CURVED_SEGMENTS);
             meshQuadCount = CURVED_SEGMENTS;
         } else {
+            int layers = SpatialGUI.config.dropShadowEnabled ? SpatialGUI.config.dropShadowLayers : 0;
+            for (int i = 0; i < layers; i++) {
+                float offsetX = (float) (SpatialGUI.config.dropShadowHorizontalOffset * (1 + i * 0.5));
+                float offsetY = (float) (SpatialGUI.config.dropShadowVerticalOffset * (1 + i * 0.5));
+                float offsetZ = (float) -SpatialGUI.config.dropShadowDepthOffset;
+                float scale = (float) (1.0 + (SpatialGUI.config.dropShadowScaleMultiplier - 1.0) * (i + 1) / layers);
+                Matrix4f layerPose = new Matrix4f(pose).translate(offsetX, offsetY, offsetZ).scale(scale, scale, scale);
+                RenderUtil.addScreenQuad(buffer, layerPose, aspect, 0, SpatialGUI.config.dropShadowAlpha / layers);
+            }
             RenderUtil.addScreenQuad(buffer, pose, aspect);
-            meshQuadCount = 1;
+            meshQuadCount = layers + 1;
         }
     }
 
